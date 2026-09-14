@@ -96,9 +96,8 @@ cd bob-ai-hackathon-Threat-Guardians
 # 2. Install dependencies
 [No dependencies are required. This project uses HTML, CSS, and JavaScript.]
 
-# 3. Configure environment
-cp .env.example .env
-# Edit .env with your values
+### 3. Configure Environment
+No environment variables are required for the current version of this project.
 
 # 4. Run the project
 [Open this file in your browser]
