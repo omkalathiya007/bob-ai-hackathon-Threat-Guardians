@@ -57,17 +57,28 @@
 ## 📁 Repository Structure
 
 ```
-├── src/                  # All source code
-├── docs/                 # Written documentation
-│   ├── problem-statement.md
-│   ├── solution-overview.md
-│   ├── architecture.md
-│   └── setup-guide.md
-├── demo/                 # Demo artifacts
-│   ├── screenshots/      # App screenshots
-│   └── demo-video-link.txt  # Link to demo video
-├── presentation/         # Slide deck
-└── submission.yaml       # Structured submission metadata
+src/
+├── index.html
+├── style.css
+├── script.js
+└── assets/
+
+docs/
+├── problem-statement.md
+├── solution-overview.md
+├── architecture.md
+└── setup-guide.md
+
+demo/
+├── screenshots/
+├── demo-video-link.txt
+└── live-demo-url.txt
+
+presentation/
+└── slides.pdf
+
+submission.yaml
+README.md
 ```
 
 ---
