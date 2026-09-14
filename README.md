@@ -89,18 +89,19 @@ README.md
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/[your-repo].git
-cd [your-repo]
+git clone https://github.com/omkalathiya007/bob-ai-hackathon-Threat-Guardians
+.git
+cd bob-ai-hackathon-Threat-Guardians
 
 # 2. Install dependencies
-[your install command here]
+[No dependencies are required. This project uses HTML, CSS, and JavaScript.]
 
 # 3. Configure environment
 cp .env.example .env
 # Edit .env with your values
 
 # 4. Run the project
-[your run command here]
+[Open this file in your browser]
 ```
 
 ---
