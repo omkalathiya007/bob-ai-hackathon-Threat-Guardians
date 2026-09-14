@@ -20,7 +20,7 @@
 
 > In 2–3 sentences: What problem does your project solve? Who experiences this problem?
 
-[Describe the real-world problem your project addresses. Be specific about who the user is and what pain point they face.]
+[Security teams struggle to analyze multiple threat feeds and identify genuine threats among false-positive alerts.A centralized AI-powered solution is needed to correlate alerts, map threats to MITRE ATT&CK, and generate prioritized BLUF summaries for commanders]
 
 ---
 
@@ -28,17 +28,17 @@
 
 > In 2–3 sentences: What did you build? How does it solve the problem above?
 
-[Describe your solution clearly. Explain the core mechanism — what makes it work.]
+[We built an AI-powered threat intelligence dashboard that collects and correlates alerts from multiple threat feeds. It identifies genuine threats, maps them to MITRE ATT&CK techniques, and generates prioritized BLUF summaries for commanders.]
 
 ---
 
 ## ✨ Key Features
 
-- **Feature 1:** [Brief description — e.g., "Real-time anomaly detection using watsonx.ai"]
-- **Feature 2:** [Brief description]
-- **Feature 3:** [Brief description]
-- **Feature 4:** [Optional]
-- **Feature 5:** [Optional]
+- **Multi-Source Threat Feeds:** [Collects threat data from multiple security sources.]
+- **Alert Correlation:** [Combines related alerts and reduces duplicate or false-positive alerts.]
+- **MITRE ATT&CK Mapping:** [Maps detected attacker activities to MITRE ATT&CK techniques.]
+- **Threat Prioritization:** [Assigns risk levels to help analysts focus on serious threats.]
+- **BLUF Summaries:** [Generates clear, prioritized investigation summaries for commanders]
 
 ---
 
