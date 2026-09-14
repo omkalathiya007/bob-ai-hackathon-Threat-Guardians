@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThreatGuard AI &#8212; Threat Intelligence Correlation &amp; Alert Prioritisation</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <!-- Leaflet MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin=""/>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar" class="sidebar">
+  <div class="sidebar-brand">
+    <i class="bi bi-shield-shaded"></i>
+    <span>ThreatGuard AI</span>
+  </div>
+  <div class="sidebar-sub">&#128274; PROTOTYPE &#8212; FICTIONAL DATA ONLY</div>
+  <ul class="sidebar-nav">
+    <li><a href="#" class="nav-link active" data-page="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+    <li><a href="#" class="nav-link" data-page="add-alert"><i class="bi bi-plus-circle"></i> Add Alert</a></li>
+    <li><a href="#" class="nav-link" data-page="threat-map"><i class="bi bi-globe-americas"></i> Threat Map</a></li>
+    <li><a href="#" class="nav-link" data-page="import-data"><i class="bi bi-cloud-upload"></i> Import Data</a></li>
+    <li><a href="#" class="nav-link" data-page="all-alerts"><i class="bi bi-table"></i> All Alerts</a></li>
+    <li><a href="#" class="nav-link" data-page="correlated"><i class="bi bi-diagram-3"></i> Correlated Incidents</a></li>
+    <li><a href="#" class="nav-link" data-page="incidents"><i class="bi bi-clipboard2-pulse"></i> Incident Management</a></li>
+    <li><a href="#" class="nav-link" data-page="fp-analysis"><i class="bi bi-shield-check"></i> False-Positive Analysis</a></li>
+    <li><a href="#" class="nav-link" data-page="mitre"><i class="bi bi-grid-3x3-gap"></i> MITRE ATT&amp;CK</a></li>
+    <li><a href="#" class="nav-link" data-page="bluf"><i class="bi bi-file-earmark-text"></i> BLUF Reports</a></li>
+    <li><a href="#" class="nav-link" data-page="export"><i class="bi bi-file-earmark-spreadsheet"></i> Export Data</a></li>
+    <li><a href="#" class="nav-link" data-page="settings"><i class="bi bi-gear"></i> Settings</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn btn-demo w-100" id="btnLoadDemo"><i class="bi bi-database-fill-add"></i> Load Demo Data</button>
+  </div>
+</nav>
+
+<!-- ===== MAIN WRAPPER ===== -->
+<div id="mainWrapper" class="main-wrapper">
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <button class="btn sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
+    <div class="header-title" id="headerTitle">Dashboard</div>
+    <div class="header-right">
+      <span class="proto-badge">PROTOTYPE</span>
+      <span class="data-badge">FICTIONAL DATA</span>
+      <span id="alertCountBadge" class="count-badge">0 Alerts</span>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main id="pageContent" class="page-content">
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <h2><i class="bi bi-speedometer2"></i> Threat Intelligence Dashboard</h2>
+          <p class="text-muted">Live overview &#8212; <strong>All data is fictional and for demonstration purposes only.</strong></p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-sm btn-outline-tg" id="btnDashRefresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnResetDemo"><i class="bi bi-database-fill-add"></i> Reset Demo</button>
+        </div>
+      </div>
+      <!-- KPI Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-total"><div class="kpi-icon"><i class="bi bi-bell-fill"></i></div><div class="kpi-value" id="kpiTotal">0</div><div class="kpi-label">Total Alerts</div></div></div>
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-critical"><div class="kpi-icon"><i class="bi bi-exclamation-octagon-fill"></i></div><div class="kpi-value" id="kpiCritical">0</div><div class="kpi-label">Critical</div></div></div>
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-high"><div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="kpi-value" id="kpiHigh">0</div><div class="kpi-label">High Priority</div></div></div>
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-inc"><div class="kpi-icon"><i class="bi bi-diagram-3-fill"></i></div><div class="kpi-value" id="kpiIncidents">0</div><div class="kpi-label">Incidents</div></div></div>
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-fp"><div class="kpi-icon"><i class="bi bi-patch-check-fill"></i></div><div class="kpi-value" id="kpiFP">0</div><div class="kpi-label">Likely FP</div></div></div>
+        <div class="col-6 col-lg-2"><div class="kpi-card kpi-score"><div class="kpi-icon"><i class="bi bi-bar-chart-fill"></i></div><div class="kpi-value" id="kpiAvgScore">0</div><div class="kpi-label">Avg Risk Score</div></div></div>
+      </div>
+      <!-- Charts -->
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-8">
+          <div class="card-dark">
+            <div class="card-dark-header">Alert Trend (Last 7 Days)</div>
+            <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card-dark">
+            <div class="card-dark-header">Severity Distribution</div>
+            <div class="chart-wrap"><canvas id="chartSev"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Alert Source Distribution</div>
+            <div class="chart-wrap-sm"><canvas id="chartSource"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Top Targeted Assets</div>
+            <div class="chart-wrap-sm"><canvas id="chartAssets"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <!-- Recent Alerts -->
+      <div class="card-dark">
+        <div class="card-dark-header d-flex justify-content-between align-items-center">
+          <span>Recent Alerts</span>
+          <button class="btn btn-sm btn-outline-accent" onclick="TG.navigate('all-alerts')">View All</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table tg-table">
+            <thead><tr><th>Alert ID</th><th>Type</th><th>Source</th><th>Severity</th><th>Risk</th><th>Priority</th><th>Status</th><th>Timestamp</th></tr></thead>
+            <tbody id="recentAlertsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ADD ALERT ===================== -->
+    <div id="page-add-alert" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-plus-circle"></i> Add New Alert</h2>
+        <p class="text-muted">Manually enter alert details. Fields marked <span class="req">*</span> are required.</p>
+      </div>
+      <form id="alertForm" novalidate>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-info-circle"></i> A. Basic Information</div>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Alert ID</label><input type="text" class="form-control tg-input" id="fAlertId" readonly/></div>
+            <div class="col-md-4"><label class="form-label">Source Type <span class="req">*</span></label>
+              <select class="form-select tg-input" id="fSourceType" required>
+                <option value="">Select...</option>
+                <option>SIEM</option><option>Cyber Sensor</option><option>Satellite Feed</option><option>Intelligence Report</option><option>Manual Entry</option>
+              </select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Timestamp <span class="req">*</span></label><input type="datetime-local" class="form-control tg-input" id="fTimestamp" required/></div>
+            <div class="col-md-4"><label class="form-label">Alert Type <span class="req">*</span></label><input type="text" class="form-control tg-input" id="fAlertType" required placeholder="e.g. Brute Force Login"/></div>
+            <div class="col-md-8"><label class="form-label">Description <span class="req">*</span></label><textarea class="form-control tg-input" id="fDescription" rows="2" required placeholder="Describe the alert..."></textarea></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-hdd-network"></i> B. Network Information</div>
+          <div class="row g-3">
+            <div class="col-md-3"><label class="form-label">Source IP</label><input type="text" class="form-control tg-input" id="fSourceIp" placeholder="203.0.113.x"/></div>
+            <div class="col-md-3"><label class="form-label">Destination IP</label><input type="text" class="form-control tg-input" id="fDestIp" placeholder="192.0.2.x"/></div>
+            <div class="col-md-3"><label class="form-label">Domain</label><input type="text" class="form-control tg-input" id="fDomain" placeholder="example.test"/></div>
+            <div class="col-md-2"><label class="form-label">Port</label><input type="text" class="form-control tg-input" id="fPort" placeholder="443"/></div>
+            <div class="col-md-12"><label class="form-label">URL</label><input type="text" class="form-control tg-input" id="fUrl" placeholder="http://..."/></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-map"></i> C. Location Information <span class="text-muted small">(optional &#8212; for Threat Map)</span></div>
+          <div class="row g-3">
+            <div class="col-md-3"><label class="form-label">Source Country</label><input type="text" class="form-control tg-input" id="fCountry" placeholder="e.g. Fictional Land"/></div>
+            <div class="col-md-3"><label class="form-label">Source City</label><input type="text" class="form-control tg-input" id="fCity" placeholder="e.g. Demo City"/></div>
+            <div class="col-md-3"><label class="form-label">Latitude</label><input type="number" class="form-control tg-input" id="fLat" placeholder="-90 to 90" step="0.0001" min="-90" max="90"/></div>
+            <div class="col-md-3"><label class="form-label">Longitude</label><input type="number" class="form-control tg-input" id="fLng" placeholder="-180 to 180" step="0.0001" min="-180" max="180"/></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-bug"></i> D. Threat Information</div>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Malware Name</label><input type="text" class="form-control tg-input" id="fMalware"/></div>
+            <div class="col-md-4"><label class="form-label">File Hash (SHA-256)</label><input type="text" class="form-control tg-input" id="fFileHash"/></div>
+            <div class="col-md-4"><label class="form-label">Threat Category <span class="req">*</span></label><input type="text" class="form-control tg-input" id="fThreatCat" required placeholder="e.g. Credential Access"/></div>
+            <div class="col-md-3"><label class="form-label">Severity <span class="req">*</span></label>
+              <select class="form-select tg-input" id="fSeverity" required><option value="">Select...</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+            </div>
+            <div class="col-md-3"><label class="form-label">Confidence (0&#8209;100) <span class="req">*</span></label><input type="number" class="form-control tg-input" id="fConfidence" min="0" max="100" required placeholder="75"/></div>
+            <div class="col-md-3"><label class="form-label">Asset Name <span class="req">*</span></label><input type="text" class="form-control tg-input" id="fAssetName" required placeholder="INFRA-SRV-01"/></div>
+            <div class="col-md-3"><label class="form-label">Asset Criticality <span class="req">*</span></label>
+              <select class="form-select tg-input" id="fAssetCrit" required><option value="">Select...</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-grid-3x3-gap"></i> E. MITRE ATT&amp;CK</div>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Tactic</label>
+              <select class="form-select tg-input" id="fMitreTactic">
+                <option value="">Select...</option>
+                <option>Reconnaissance</option><option>Resource Development</option><option>Initial Access</option>
+                <option>Execution</option><option>Persistence</option><option>Privilege Escalation</option>
+                <option>Defense Evasion</option><option>Credential Access</option><option>Discovery</option>
+                <option>Lateral Movement</option><option>Collection</option><option>Command and Control</option>
+                <option>Exfiltration</option><option>Impact</option>
+              </select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Technique ID</label><input type="text" class="form-control tg-input" id="fMitreTechId" placeholder="T1110"/></div>
+            <div class="col-md-4"><label class="form-label">Technique Name</label><input type="text" class="form-control tg-input" id="fMitreTechName" placeholder="Brute Force"/></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-person-badge"></i> F. Analyst Information</div>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Analyst Name <span class="req">*</span></label><input type="text" class="form-control tg-input" id="fAnalyst" required placeholder="Your name"/></div>
+            <div class="col-md-4"><label class="form-label">Status</label>
+              <select class="form-select tg-input" id="fStatus"><option>New</option><option>Under Investigation</option><option>Confirmed</option><option>False Positive</option><option>Closed</option></select>
+            </div>
+            <div class="col-md-12"><label class="form-label">Notes</label><textarea class="form-control tg-input" id="fNotes" rows="2" placeholder="Add notes..."></textarea></div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap mb-4">
+          <button type="submit" class="btn btn-primary-tg"><i class="bi bi-check-circle"></i> Submit Alert</button>
+          <button type="button" class="btn btn-secondary-tg" id="btnSaveDraft"><i class="bi bi-save"></i> Save Draft</button>
+          <button type="button" class="btn btn-outline-tg" id="btnClearForm"><i class="bi bi-x-circle"></i> Clear Form</button>
+        </div>
+        <div id="formMessages"></div>
+      </form>
+    </div>
+
+    <!-- ===================== IMPORT DATA ===================== -->
+    <div id="page-import-data" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-cloud-upload"></i> Import Alert Data</h2>
+        <p class="text-muted">Upload JSON or CSV files. All processing happens in your browser &#8212; no data is sent externally.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Upload File</div>
+            <div class="p-3">
+              <div class="drop-zone" id="dropZone">
+                <i class="bi bi-cloud-upload display-4"></i>
+                <p>Drag &amp; drop JSON or CSV file here</p>
+                <p class="text-muted small">or click to browse</p>
+                <input type="file" id="fileInput" accept=".json,.csv" class="d-none"/>
+              </div>
+              <div id="fileInfo" class="mt-3"></div>
+              <div id="importMessages" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Instructions</div>
+            <div class="p-3">
+              <h6 class="text-accent">JSON Format</h6>
+              <p class="text-muted small">Array of alert objects. Required: alertType, severity, sourceType, timestamp.</p>
+              <h6 class="text-accent">CSV Format</h6>
+              <p class="text-muted small">First row = headers. Required columns: alertType, severity, sourceType, timestamp.</p>
+              <h6 class="text-accent">Sample File</h6>
+              <button class="btn btn-sm btn-outline-accent" id="btnDownloadSample"><i class="bi bi-download"></i> Download Sample JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="importPreview" class="mt-4 d-none">
+        <div class="card-dark">
+          <div class="card-dark-header d-flex justify-content-between align-items-center">
+            <span>Preview (<span id="previewCount">0</span> records)</span>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary-tg" id="btnConfirmImport"><i class="bi bi-check-circle"></i> Confirm Import</button>
+              <button class="btn btn-sm btn-outline-tg" id="btnCancelImport"><i class="bi bi-x"></i> Cancel</button>
+            </div>
+          </div>
+          <div class="table-responsive" style="max-height:350px;overflow-y:auto">
+            <table class="table tg-table" id="previewTable">
+              <thead><tr id="previewHeaders"></tr></thead>
+              <tbody id="previewTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ALL ALERTS ===================== -->
+    <div id="page-all-alerts" class="page">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div><h2><i class="bi bi-table"></i> All Alerts</h2><p class="text-muted">Complete alert inventory with search, filter, and sort.</p></div>
+        <button class="btn btn-primary-tg btn-sm" onclick="TG.navigate('add-alert')"><i class="bi bi-plus"></i> Add Alert</button>
+      </div>
+      <div class="filter-bar mb-3">
+        <input type="text" class="form-control tg-input filter-input" id="searchAlerts" placeholder="Search ID, IP, domain, type..."/>
+        <select class="form-select tg-input filter-select" id="filterSeverity"><option value="">All Severities</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+        <select class="form-select tg-input filter-select" id="filterStatus"><option value="">All Statuses</option><option>New</option><option>Under Investigation</option><option>Confirmed</option><option>False Positive</option><option>Closed</option></select>
+        <select class="form-select tg-input filter-select" id="filterSource"><option value="">All Sources</option><option>SIEM</option><option>Cyber Sensor</option><option>Satellite Feed</option><option>Intelligence Report</option><option>Manual Entry</option></select>
+        <select class="form-select tg-input filter-select" id="filterPriority"><option value="">All Priorities</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
+        <input type="date" class="form-control tg-input" id="filterDateFrom" style="max-width:145px" title="From date"/>
+        <input type="date" class="form-control tg-input" id="filterDateTo" style="max-width:145px" title="To date"/>
+        <select class="form-select tg-input filter-select" id="sortAlerts">
+          <option value="timestamp-desc">Newest First</option><option value="timestamp-asc">Oldest First</option>
+          <option value="risk-desc">Highest Risk</option><option value="risk-asc">Lowest Risk</option>
+        </select>
+        <button class="btn btn-outline-tg btn-sm" id="btnClearFilters"><i class="bi bi-x-circle"></i> Clear</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table tg-table">
+          <thead><tr><th>Alert ID</th><th>Type</th><th>Source</th><th>Severity</th><th>Risk</th><th>Priority</th><th>Classification</th><th>Status</th><th>Asset</th><th>Timestamp</th><th>Actions</th></tr></thead>
+          <tbody id="allAlertsTbody"></tbody>
+        </table>
+      </div>
+      <div id="alertsPagination" class="pagination-bar mt-2"></div>
+    </div>
+
+    <!-- ===================== CORRELATED INCIDENTS ===================== -->
+    <div id="page-correlated" class="page">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div><h2><i class="bi bi-diagram-3"></i> Correlated Incidents</h2><p class="text-muted">Alerts grouped by shared indicators. <strong>Correlation does not confirm a threat &#8212; analyst review required.</strong></p></div>
+        <button class="btn btn-primary-tg btn-sm" id="btnRunCorrelation"><i class="bi bi-arrow-clockwise"></i> Re-run Correlation</button>
+      </div>
+      <div id="incidentsList"></div>
+    </div>
+
+    <!-- ===================== INCIDENT MANAGEMENT ===================== -->
+    <div id="page-incidents" class="page">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div><h2><i class="bi bi-clipboard2-pulse"></i> Incident Management</h2><p class="text-muted">Manage correlated incidents. Change status, add notes, track resolution.</p></div>
+        <button class="btn btn-primary-tg btn-sm" id="btnRunCorrelation2"><i class="bi bi-arrow-clockwise"></i> Re-run Correlation</button>
+      </div>
+      <div class="filter-bar mb-3">
+        <input type="text" class="form-control tg-input filter-input" id="incidentSearch" placeholder="Search incident ID or asset..."/>
+        <select class="form-select tg-input filter-select" id="incidentFilterStatus"><option value="">All Statuses</option><option>Active</option><option>Investigating</option><option>Confirmed</option><option>Resolved</option><option>False Positive</option></select>
+        <select class="form-select tg-input filter-select" id="incidentFilterPriority"><option value="">All Priorities</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
+        <button class="btn btn-outline-tg btn-sm" id="btnIncidentFilterClear"><i class="bi bi-x-circle"></i> Clear</button>
+      </div>
+      <div id="incidentMgmtList"></div>
+    </div>
+
+    <!-- ===================== FALSE-POSITIVE ANALYSIS ===================== -->
+    <div id="page-fp-analysis" class="page">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div><h2><i class="bi bi-shield-check"></i> False-Positive Analysis</h2><p class="text-muted">Automated preliminary assessment only &#8212; analyst review required for all classifications.</p></div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-tg" id="btnFpAll">All</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnFpFP">Likely Benign</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnFpMal">Likely Malicious</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnFpSusp">Suspicious</button>
+        </div>
+      </div>
+      <div id="fpList"></div>
+    </div>
+
+    <!-- ===================== MITRE ATT&CK ===================== -->
+    <div id="page-mitre" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-grid-3x3-gap"></i> MITRE ATT&amp;CK Mapping</h2>
+        <p class="text-muted">Technique mappings from submitted alerts. Analyst input + automated matching &#8212; not independently verified.</p>
+      </div>
+      <div class="filter-bar mb-3">
+        <input type="text" class="form-control tg-input filter-input" id="mitreSearch" placeholder="Search technique ID or name..."/>
+        <select class="form-select tg-input filter-select" id="mitreTacticFilter">
+          <option value="">All Tactics</option>
+          <option>Reconnaissance</option><option>Resource Development</option><option>Initial Access</option>
+          <option>Execution</option><option>Persistence</option><option>Privilege Escalation</option>
+          <option>Defense Evasion</option><option>Credential Access</option><option>Discovery</option>
+          <option>Lateral Movement</option><option>Collection</option><option>Command and Control</option>
+          <option>Exfiltration</option><option>Impact</option>
+        </select>
+        <button class="btn btn-outline-tg btn-sm" id="btnMitreClear"><i class="bi bi-x-circle"></i> Clear</button>
+      </div>
+      <div id="mitreOverview" class="row g-3 mb-4"></div>
+      <div class="card-dark">
+        <div class="card-dark-header">Technique Details</div>
+        <div class="table-responsive">
+          <table class="table tg-table">
+            <thead><tr><th>Technique ID</th><th>Technique Name</th><th>Tactic</th><th>Related Alerts</th><th>Evidence Strength</th><th>Mapping Confidence</th></tr></thead>
+            <tbody id="mitreTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== THREAT MAP ===================== -->
+    <div id="page-threat-map" class="page">
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <h2><i class="bi bi-globe-americas"></i> Global Threat Map</h2>
+          <p class="text-muted">Interactive map of fictional alert origins. <strong>All locations are fictional demonstration data &#8212; not real attack origins.</strong></p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-sm btn-primary-tg" id="btnMapFitAll"><i class="bi bi-arrows-fullscreen"></i> Fit All</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnMapRefresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+          <button class="btn btn-sm btn-outline-tg" id="btnMapClear"><i class="bi bi-trash3"></i> Clear Map</button>
+        </div>
+      </div>
+
+      <!-- Map Summary KPIs -->
+      <div class="row g-3 mb-3">
+        <div class="col-6 col-md-2"><div class="kpi-card kpi-total"><div class="kpi-icon"><i class="bi bi-pin-map-fill"></i></div><div class="kpi-value" id="mapKpiTotal">0</div><div class="kpi-label">Mapped Alerts</div></div></div>
+        <div class="col-6 col-md-2"><div class="kpi-card kpi-critical"><div class="kpi-icon"><i class="bi bi-exclamation-octagon-fill"></i></div><div class="kpi-value" id="mapKpiCritical">0</div><div class="kpi-label">Critical</div></div></div>
+        <div class="col-6 col-md-2"><div class="kpi-card kpi-high"><div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="kpi-value" id="mapKpiHigh">0</div><div class="kpi-label">High</div></div></div>
+        <div class="col-6 col-md-3"><div class="kpi-card kpi-inc"><div class="kpi-icon"><i class="bi bi-globe"></i></div><div class="kpi-value" id="mapKpiCountries">0</div><div class="kpi-label">Countries</div></div></div>
+        <div class="col-6 col-md-3"><div class="kpi-card kpi-score"><div class="kpi-icon"><i class="bi bi-bar-chart-fill"></i></div><div class="kpi-value" id="mapKpiMaxRisk">0</div><div class="kpi-label">Max Risk Score</div></div></div>
+      </div>
+
+      <!-- Filters Row -->
+      <div class="card-dark mb-3">
+        <div class="card-dark-header">Map Filters</div>
+        <div class="p-3">
+          <div class="filter-bar">
+            <select class="form-select tg-input filter-select" id="mapFilterSeverity"><option value="">All Severities</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+            <select class="form-select tg-input filter-select" id="mapFilterCountry"><option value="">All Countries</option></select>
+            <select class="form-select tg-input filter-select" id="mapFilterSource"><option value="">All Sources</option><option>SIEM</option><option>Cyber Sensor</option><option>Satellite Feed</option><option>Intelligence Report</option><option>Manual Entry</option></select>
+            <select class="form-select tg-input filter-select" id="mapFilterMitre"><option value="">All MITRE Techniques</option></select>
+            <select class="form-select tg-input filter-select" id="mapFilterRisk">
+              <option value="">All Risk Levels</option>
+              <option value="80">P1 (80&#8209;100)</option>
+              <option value="60">P2 (60&#8209;79)</option>
+              <option value="35">P3 (35&#8209;59)</option>
+              <option value="0">P4 (0&#8209;34)</option>
+            </select>
+            <input type="date" class="form-control tg-input" id="mapFilterDateFrom" style="max-width:145px" title="From date"/>
+            <input type="date" class="form-control tg-input" id="mapFilterDateTo" style="max-width:145px" title="To date"/>
+            <button class="btn btn-outline-tg btn-sm" id="btnMapClearFilters"><i class="bi bi-x-circle"></i> Clear Filters</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div class="card-dark mb-3">
+        <div class="card-dark-header d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-map text-accent"></i> Interactive Threat Map <span class="text-muted small ms-2">&#8212; All data fictional</span></span>
+          <!-- Legend -->
+          <div class="map-legend-inline">
+            <span class="map-leg-item"><span class="map-leg-dot" style="background:#f85149"></span>Critical</span>
+            <span class="map-leg-item"><span class="map-leg-dot" style="background:#e3b341"></span>High</span>
+            <span class="map-leg-item"><span class="map-leg-dot" style="background:#3fb950"></span>Medium</span>
+            <span class="map-leg-item"><span class="map-leg-dot" style="background:#388bfd"></span>Low</span>
+          </div>
+        </div>
+        <div id="threatMapContainer" style="height:560px;width:100%;position:relative;background:#03060f;">
+          <div id="threatMapEl" style="height:100%;width:100%;"></div>
+          <div id="mapLoadingOverlay" class="map-loading-overlay">
+            <div class="map-loading-text"><i class="bi bi-globe-americas"></i> Initialising map...</div>
+          </div>
+        </div>
+        <div id="mapEmptyState" class="map-empty-state d-none">
+          <i class="bi bi-pin-map display-4 d-block mb-2 text-muted"></i>
+          <p class="text-muted">No alerts with location data found.</p>
+          <p class="text-muted small">Load demo data or add alerts with country/city information to display markers.</p>
+          <button class="btn btn-sm btn-outline-accent mt-2" onclick="Demo.load()"><i class="bi bi-database-fill-add"></i> Load Demo Data</button>
+        </div>
+      </div>
+
+      <!-- Map Alerts Table -->
+      <div class="card-dark">
+        <div class="card-dark-header">Mapped Alerts (<span id="mapTableCount">0</span>)</div>
+        <div class="table-responsive">
+          <table class="table tg-table">
+            <thead><tr><th>Alert ID</th><th>Country</th><th>City</th><th>Severity</th><th>Risk Score</th><th>Source</th><th>Timestamp</th><th>MITRE</th><th>Action</th></tr></thead>
+            <tbody id="mapAlertsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- end page-threat-map -->
+
+    <!-- ===================== BLUF REPORTS ===================== -->
+    <div id="page-bluf" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-file-earmark-text"></i> BLUF Report Generator</h2>
+        <p class="text-muted">Bottom Line Up Front intelligence summaries. All assessments require qualified analyst review.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card-dark">
+            <div class="card-dark-header">Generate Report</div>
+            <div class="p-3">
+              <label class="form-label">Select Alert or Incident</label>
+              <select class="form-select tg-input mb-3" id="blufSelector"><option value="">&#8212; Select &#8212;</option></select>
+              <button class="btn btn-primary-tg w-100" id="btnGenerateBluf"><i class="bi bi-file-earmark-plus"></i> Generate BLUF Report</button>
+              <hr class="tg-divider"/>
+              <div class="form-label text-muted small">Saved Reports</div>
+              <div id="blufReportList" style="max-height:320px;overflow-y:auto"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card-dark" id="blufOutputCard">
+            <div class="card-dark-header d-flex justify-content-between align-items-center">
+              <span>BLUF Report</span>
+              <!-- Bug fixed: removed conflicting inline style; visibility now controlled solely by JS -->
+              <div class="d-flex gap-2 d-none" id="blufActions">
+                <button class="btn btn-sm btn-outline-accent" id="btnCopyBluf"><i class="bi bi-clipboard"></i> Copy</button>
+                <button class="btn btn-sm btn-outline-accent" id="btnDownloadBluf"><i class="bi bi-download"></i> Download</button>
+                <button class="btn btn-sm btn-outline-accent" id="btnPrintBluf"><i class="bi bi-printer"></i> Print/PDF</button>
+                <button class="btn btn-sm btn-primary-tg" id="btnSaveBluf"><i class="bi bi-save"></i> Save</button>
+              </div>
+            </div>
+            <div id="blufContent" class="p-3">
+              <div class="text-center text-muted py-5">
+                <i class="bi bi-file-earmark-text display-4 d-block mb-2"></i>
+                Select an alert or incident and click Generate.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== EXPORT DATA ===================== -->
+    <div id="page-export" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-file-earmark-spreadsheet"></i> Export Data</h2>
+        <p class="text-muted">Export all data to Excel or CSV. Processed entirely in your browser.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-8">
+          <div class="card-dark">
+            <div class="card-dark-header">Export Summary</div>
+            <div class="p-3">
+              <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3"><div class="export-stat"><div class="export-stat-value" id="expAlerts">0</div><div class="export-stat-label">Alerts</div></div></div>
+                <div class="col-6 col-md-3"><div class="export-stat"><div class="export-stat-value" id="expIncidents">0</div><div class="export-stat-label">Incidents</div></div></div>
+                <div class="col-6 col-md-3"><div class="export-stat"><div class="export-stat-value" id="expReports">0</div><div class="export-stat-label">BLUF Reports</div></div></div>
+                <div class="col-6 col-md-3"><div class="export-stat"><div class="export-stat-value" id="expMitre">0</div><div class="export-stat-label">MITRE Mappings</div></div></div>
+              </div>
+              <div class="export-sheets mb-4">
+                <h6 class="text-accent mb-3">Excel Workbook Sheets</h6>
+                <div class="sheet-item"><i class="bi bi-table text-accent"></i> <strong>Sheet 1: Alerts</strong> &#8212; All alert fields including location</div>
+                <div class="sheet-item"><i class="bi bi-diagram-3 text-accent"></i> <strong>Sheet 2: Incidents</strong> &#8212; Correlated incident groups</div>
+                <div class="sheet-item"><i class="bi bi-file-earmark-text text-accent"></i> <strong>Sheet 3: BLUF Reports</strong> &#8212; Saved intelligence summaries</div>
+                <div class="sheet-item"><i class="bi bi-grid-3x3-gap text-accent"></i> <strong>Sheet 4: MITRE Mappings</strong> &#8212; Technique-to-alert mappings</div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap mb-3">
+                <button class="btn btn-primary-tg btn-lg" id="btnExportAll"><i class="bi bi-download"></i> Export All (Excel)</button>
+                <button class="btn btn-outline-tg" id="btnExportAlerts"><i class="bi bi-table"></i> Alerts Only (Excel)</button>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-tg" id="btnExportCSV"><i class="bi bi-filetype-csv"></i> Export All (CSV)</button>
+                <button class="btn btn-outline-tg" id="btnExportAlertsCSV"><i class="bi bi-filetype-csv"></i> Alerts CSV</button>
+                <button class="btn btn-outline-tg" id="btnExportIncidentsCSV"><i class="bi bi-filetype-csv"></i> Incidents CSV</button>
+              </div>
+              <div id="exportMessages" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-dark">
+            <div class="card-dark-header">Export Log</div>
+            <div class="p-3" id="exportLog" style="max-height:300px;overflow-y:auto;font-size:0.8rem"><p class="text-muted">No exports yet.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== SETTINGS ===================== -->
+    <div id="page-settings" class="page">
+      <div class="page-header">
+        <h2><i class="bi bi-gear"></i> Settings</h2>
+        <p class="text-muted">Application configuration and data management.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Correlation Settings</div>
+            <div class="p-3">
+              <label class="form-label">Time Window for Correlation (minutes)</label>
+              <input type="number" class="form-control tg-input mb-3" id="corrTimeWindow" value="60" min="1" max="1440"/>
+              <label class="form-label">Minimum Shared Indicators</label>
+              <input type="number" class="form-control tg-input mb-3" id="corrMinIndicators" value="1" min="1" max="5"/>
+              <button class="btn btn-primary-tg" id="btnSaveSettings"><i class="bi bi-save"></i> Save Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card-dark">
+            <div class="card-dark-header">Data Management</div>
+            <div class="p-3">
+              <p class="text-muted small">Manage data stored in browser LocalStorage.</p>
+              <div class="storage-info mb-3" id="storageInfo"></div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-warning btn-sm" id="btnExportBackup"><i class="bi bi-download"></i> Backup JSON</button>
+                <button class="btn btn-danger btn-sm" id="btnClearAll"><i class="bi bi-trash3"></i> Clear All Data</button>
+              </div>
+              <div class="alert-danger-tg mt-3 d-none" id="clearWarning">
+                &#9888; This permanently deletes ALL stored alerts, incidents, reports, and settings. This cannot be undone.
+                <div class="d-flex gap-2 mt-2">
+                  <button class="btn btn-danger btn-sm" id="btnConfirmClear">Yes, Delete Everything</button>
+                  <button class="btn btn-outline-tg btn-sm" id="btnCancelClear">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="card-dark">
+            <div class="card-dark-header">About</div>
+            <div class="p-3">
+              <p><strong>ThreatGuard AI</strong> &#8212; Threat Intelligence Correlation &amp; Alert Prioritisation Assistant</p>
+              <p class="text-muted small">Version 2.1 | Hackathon Prototype | <strong>All data in this application is fictional and for demonstration purposes only.</strong></p>
+              <div class="d-flex gap-2 flex-wrap mt-2">
+                <span class="badge-tg">HTML5</span><span class="badge-tg">CSS3</span><span class="badge-tg">Vanilla JavaScript</span>
+                <span class="badge-tg">Bootstrap 5</span><span class="badge-tg">Chart.js</span><span class="badge-tg">SheetJS</span>
+                <span class="badge-tg">Leaflet.js</span><span class="badge-tg">LocalStorage</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end main-wrapper -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Alert Detail / Edit Modal -->
+<div class="modal fade" id="alertDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content tg-modal">
+      <div class="modal-header tg-modal-header">
+        <h5 class="modal-title" id="alertDetailTitle">Alert Detail</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="alertDetailBody"></div>
+      <div class="modal-footer tg-modal-footer">
+        <button class="btn btn-primary-tg" id="btnEditAlert">Edit Alert</button>
+        <button class="btn btn-outline-accent" id="btnGenerateBlufFromModal">Generate BLUF</button>
+        <button class="btn btn-outline-tg" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content tg-modal">
+      <div class="modal-header tg-modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete alert <strong id="deleteAlertId"></strong>?</p>
+        <p class="text-muted small">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer tg-modal-footer">
+        <button class="btn btn-danger" id="btnConfirmDelete">Delete</button>
+        <button class="btn btn-outline-tg" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Incident Detail Modal -->
+<div class="modal fade" id="incidentModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content tg-modal">
+      <div class="modal-header tg-modal-header">
+        <h5 class="modal-title" id="incidentModalTitle">Incident Detail</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="incidentModalBody"></div>
+      <div class="modal-footer tg-modal-footer">
+        <button class="btn btn-outline-accent" id="btnIncidentBluf">Generate BLUF</button>
+        <button class="btn btn-outline-tg" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CDN Scripts &#8212; order matters -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<!-- Leaflet MarkerCluster JS -->
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
+<!-- App JS -->
+<script src="script.js"></script>
+</body>
+</html>
