@@ -46,11 +46,11 @@
 
 | Category | Technologies |
 |---|---|
-| **Languages** | [e.g., Python, TypeScript] |
-| **Frameworks** | [e.g., FastAPI, React] |
-| **IBM Technologies** | [e.g., watsonx.ai, IBM Bob, IBM Cloud] |
-| **Databases** | [e.g., PostgreSQL, Redis] |
-| **Other** | [e.g., Docker, GitHub Actions] |
+| **Languages** | [HTML, CSS, JavaScript] |
+| **Frameworks** | [None] |
+| **IBM Technologies** | [IBM Bob] |
+| **Databases** | [None] |
+| **Other** | [GitHub, GitHub Actions] |
 
 ---
 
