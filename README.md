@@ -128,6 +128,6 @@ No environment variables are required for the current version of this project.
 
 ## 🏅 What We're Most Proud Of
 
-[Tell the judges what part of your submission is strongest and worth paying close attention to.]
+[We are proud of building the Threat Guardians dashboard, which helps security teams analyze threat alerts, identify genuine threats, and prioritize important incidents. Our solution also maps attacker activities to MITRE ATT&CK and generates clear BLUF summaries for commanders.]
 
 ---
