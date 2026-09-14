@@ -1,4 +1,4 @@
-# 🚀 [Threat Intelligence Correlation & Alert Prioritisation Assista]
+# 🚀 [Threat Intelligence Correlation & Alert Prioritisation Assistant]
 
 
 > ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
@@ -11,8 +11,8 @@
 |---|---|
 | **Team Name** | [Threat Guardians] |
 | **Track** | [AI] |
-| **Team Lead** | [Name] — [email@ibm.com] |
-| **Members** | [Name 1], [Name 2], [Name 3] |
+| **Team Lead** | [Om Kalathiya] — [26dce036@charusat.edu.in] |
+| **Members** | [Naitik Lumbhani], [Manya bhuva], [Aditi Patel] |
 
 ---
 
