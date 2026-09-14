@@ -20,7 +20,7 @@
 
 > In 2–3 sentences: What problem does your project solve? Who experiences this problem?
 
-[Security teams struggle to analyze multiple threat feeds and identify genuine threats among false-positive alerts.A centralized AI-powered solution is needed to correlate alerts, map threats to MITRE ATT&CK, and generate prioritized BLUF summaries for commanders]
+[Cybersecurity teams receive a large amount of threat information from different sources.It can be difficult to monitor, understand, and analyze these threats quickly.Threat Guardians aims to provide a simple dashboard that helps users view and understand cybersecurity threat information in an organized way.]
 
 ---
 
@@ -28,7 +28,11 @@
 
 > In 2–3 sentences: What did you build? How does it solve the problem above?
 
-[We built an AI-powered threat intelligence dashboard that collects and correlates alerts from multiple threat feeds. It identifies genuine threats, maps them to MITRE ATT&CK techniques, and generates prioritized BLUF summaries for commanders.]
+[Threat Guardians is a cybersecurity dashboard that displays threat-related information 
+through a user-friendly web interface.
+
+The project helps users explore threat data, view security alerts, and understand 
+important information using an organized dashboard..]
 
 ---
 
