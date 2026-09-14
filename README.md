@@ -120,9 +120,9 @@ No environment variables are required for the current version of this project.
 
 > Be honest — judges appreciate transparency over overclaiming.
 
-- [Limitation 1: e.g., "Authentication is mocked — not production-ready"]
-- [Limitation 2: e.g., "Only tested on Chrome"]
-- [Limitation 3: e.g., "Feature X is scaffolded but not fully implemented"]
+- [The project currently uses sample threat data for demonstration.]
+- [AI-based threat correlation and analysis are still under development.]
+- [The project has been tested mainly in a web browser]
 
 ---
 
