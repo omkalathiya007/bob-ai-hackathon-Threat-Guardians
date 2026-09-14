@@ -1,5 +1,5 @@
-# 🚀 [Threat Intelligence Correlation & Alert
-Prioritisation Assista]
+# 🚀 [Threat Intelligence Correlation & Alert Prioritisation Assista]
+
 
 > ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
 
@@ -9,8 +9,8 @@ Prioritisation Assista]
 
 | Field | Value |
 |---|---|
-| **Team Name** | [Your Team Name] |
-| **Track** | [AI / DevOps / Sustainability / Open] |
+| **Team Name** | [Threat Guardians] |
+| **Track** | [AI] |
 | **Team Lead** | [Name] — [email@ibm.com] |
 | **Members** | [Name 1], [Name 2], [Name 3] |
 
