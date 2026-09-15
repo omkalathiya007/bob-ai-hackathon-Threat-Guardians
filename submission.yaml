@@ -25,11 +25,16 @@ team:
 submission:
   title: "Threat Intelligence Assistant"                           # REQUIRED — Project display name, e.g., "SmartOps Dashboard"
 
-  problem_statement: >                 # REQUIRED — 1-3 sentences. What problem? Who has it?
-    Cybersecurity teams receive a large amount of threat information from different sources.It can be difficult to monitor, understand, and analyze these threats quickly.Threat Guardians aims to provide a simple dashboard that helps users view and understand cybersecurity threat information in an organized way.
+   problem_statement: >
+    Cybersecurity teams receive a large amount of threat information from
+    different sources. It can be difficult to monitor, understand, and
+    analyze these threats quickly.
 
-  solution_summary: >                  # REQUIRED — 1-3 sentences. What did you build?
-   Threat Guardians is a cybersecurity dashboard that displays threat-related information through a user-friendly web interface.
+ solution_summary: >
+  Threat Guardians is a cybersecurity dashboard that displays threat-related
+  information through a user-friendly web interface. The project helps users
+  explore threat data, view security alerts, and understand important
+  information using an organized dashboard.
 
 The project helps users explore threat data, view security alerts, and understand important information using an organized dashboard.
 
