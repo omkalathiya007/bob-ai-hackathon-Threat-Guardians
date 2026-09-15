@@ -114,7 +114,7 @@ No environment variables are required for the current version of this project.
 | Artifact | Link |
 |---|---|
 | 📹 Demo Video | [See demo/demo-video-link.txt](demo/demo-video-link.txt) |
-| 🌐 Live Demo | [See demo/live-demo-url.txt](demo/live-demo-url.txt) |
+| 🌐 Live Demo | [[See demo/live-demo-url.txt](demo/live-demo-url.txt](https://bob-ai-hackathon-threat-guardians.vercel.app)) |
 | 🖼️ Screenshots | [See demo/screenshots/](demo/screenshots/) |
 | 📊 Presentation | [See presentation/slides.pdf](presentation/) |
 
