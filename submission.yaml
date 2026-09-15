@@ -13,7 +13,8 @@ team:
   track: "AI"                            # REQUIRED — one of: AI | DevOps | Sustainability | Open
   lead:
     name: "kalathiya om dharmeshbhai"                           # REQUIRED — e.g., "Alice Chen"
-    email: "26dce036@charusat.edu.in"                          # REQUIRED — e.g., "alice.chen@ibm.com"
+    email: "26dce036@charusat.edu.in"
+    github: "omkalathiya007"   # REQUIRED — e.g., "alice.chen@ibm.com"
   members:
     - name: "lumbhani naitik sureshbhai"                         # REQUIRED — Team member 1
       email: "26dce044@charusat.edu.in"
