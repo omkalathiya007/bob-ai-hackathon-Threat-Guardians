@@ -34,11 +34,11 @@ submission:
 The project helps users explore threat data, view security alerts, and understand important information using an organized dashboard.
 
   key_features:                        # REQUIRED — List 3 to 5 specific features you implemented
-   Multi-Source Threat Feeds - "Collects threat data from multiple security sources."                               # e.g., "Real-time pipeline anomaly detection using watsonx.ai"
-   Alert Correlation - "Combines related alerts and reduces duplicate or false-positive alerts."
-   MITRE ATT&CK Mapping - "Maps detected attacker activities to MITRE ATT&CK techniques"
-   Threat Prioritization - "Assigns risk levels to help analysts focus on serious threats."                               # optional 4th
-   BLUF Summaries - "Generates clear, prioritized investigation summaries for commanders"                               # optional 5th
+    - "Multi-Source Threat Feeds - Collects threat data from multiple security sources."                             # e.g., "Real-time pipeline anomaly detection using watsonx.ai"
+   - "Alert Correlation - Combines related alerts and reduces duplicate alerts."
+ - "MITRE ATT&CK Mapping - Maps detected attacker activities to MITRE ATT&CK techniques."
+  - "Threat Prioritization - Assigns risk levels to help analysts focus on serious threats."                             # optional 4th
+    - "BLUF Summaries - Generates clear, prioritised investigation summaries."                             # optional 5th
 
   tech_stack:
     languages: [HTML, CSS, JavaScript]                      # REQUIRED — e.g., ["Python", "TypeScript"]
