@@ -9,67 +9,79 @@
 # =============================================================================
 
 team:
-  name: "Threat Guardians"                             # REQUIRED — e.g., "Orion Squad"
-  track: "AI"                            # REQUIRED — one of: AI | DevOps | Sustainability | Open
+  name: "Threat Guardians"
+  track: "AI"
+
   lead:
-    name: "kalathiya om dharmeshbhai"                           # REQUIRED — e.g., "Alice Chen"
-    email: "26dce036@charusat.edu.in"
-    github: "omkalathiya007"   # REQUIRED — e.g., "alice.chen@ibm.com"
+    name: "Kalathiya Om Dharmeshbhai"
+    email: "YOUR_EMAIL@example.com"
+    github: "omkalathiya007"
+
   members:
-    - name: "lumbhani naitik sureshbhai"                         # REQUIRED — Team member 1
+    - name: "lumbhani naitik sureshbhai"
       email: "26dce044@charusat.edu.in"
-    - name: "bhuva manya tejasbhai"                         # Add more members by copying the two lines above
+
+    - name: "bhuva manya tejashbhai"
       email: "26dce012@charusat.edu.in"
-    - name: "patel aditi kamleshkumar"
+
+    - name: "patel aditi kamlesh kumar"
       email: "26dce064@charusat.edu.in"
 
 submission:
-  title: "Threat Intelligence Assistant"                           # REQUIRED — Project display name, e.g., "SmartOps Dashboard"
+  title: "Threat Intelligence Correlation and Alert Prioritisation Assistant"
 
-   problem_statement: >
-    Cybersecurity teams receive a large amount of threat information from
-    different sources. It can be difficult to monitor, understand, and
-    analyze these threats quickly.
+  problem_statement: >
+    Cybersecurity teams receive a large amount of threat information
+    from different sources. It is difficult to monitor, understand,
+    and analyse these threats quickly and prioritise important alerts.
 
- solution_summary: >
-  Threat Guardians is a cybersecurity dashboard that displays threat-related
-  information through a user-friendly web interface. The project helps users
-  explore threat data, view security alerts, and understand important
-  information using an organized dashboard.
+  solution_summary: >
+    Threat Guardians is a cybersecurity dashboard that helps users
+    explore threat intelligence, correlate security alerts, and
+    understand important threats through a user-friendly interface.
 
-The project helps users explore threat data, view security alerts, and understand important information using an organized dashboard.
-
-  key_features:                        # REQUIRED — List 3 to 5 specific features you implemented
-  - "Multi-Source Threat Feeds - Collects threat data from multiple security sources."                             # e.g., "Real-time pipeline anomaly detection using watsonx.ai"
-   - "Alert Correlation - Combines related alerts and reduces duplicate alerts."
- - "MITRE ATT&CK Mapping - Maps detected attacker activities to MITRE ATT&CK techniques."
-  - "Threat Prioritization - Assigns risk levels to help analysts focus on serious threats."                             # optional 4th
-    - "BLUF Summaries - Generates clear, prioritised investigation summaries."                             # optional 5th
+  key_features:
+    - "Multi-Source Threat Feeds"
+    - "Alert Correlation"
+    - "MITRE ATT&CK Mapping"
+    - "Threat Prioritization"
+    - "BLUF Summaries"
 
   tech_stack:
-    languages: [HTML, CSS, JavaScript]                      # REQUIRED — e.g., ["Python", "TypeScript"]
-    frameworks: [None]                     # e.g., ["FastAPI", "React"]
-    ibm_technologies: [IBM Bob]               # e.g., ["watsonx.ai", "IBM Bob", "IBM Cloud Functions"]
-    databases: [None GitHub]                      # e.g., ["PostgreSQL", "Redis"]
-    other: [ GitHub Actions]                          # e.g., ["Docker", "GitHub Actions", "Slack API"]
+    languages:
+      - "Python"
+      - "HTML"
+      - "CSS"
+      - "JavaScript"
 
-  what_we_are_most_proud_of: >         # Optional but recommended — guides judges to your best work
-    Replace with what aspect of the submission you consider strongest
-    and want judges to pay special attention to.
+    frameworks:
+      - "Streamlit"
 
-  known_limitations: >                 # Optional but recommended — be honest about gaps
-    Replace with any known limitations, incomplete features,
-    or shortcuts taken due to time constraints.
+    llm_technologies:
+      - "IBM watsonx"
 
-# =============================================================================
-# ARTIFACT LOCATIONS
-# These paths are relative to the repo root. Only change if you moved files.
-# =============================================================================
+    databases:
+      - "PostgreSQL"
+
+    other:
+      - "REST APIs"
+      - "GitHub"
+
+  what_are_you_most_proud_of: >
+    We are proud of developing a cybersecurity dashboard that
+    organizes threat intelligence and helps users understand
+    security alerts more efficiently.
+
+  known_limitations: >
+    The system depends on the availability and quality of threat
+    intelligence data. Some advanced features may require further
+    testing and integration.
+
 artifacts:
   source_code: "src/"
   setup_guide: "docs/setup-guide.md"
   architecture_doc: "docs/architecture.md"
-  demo_video: "demo/demo-video-link.txt"   # URL to hosted video (YouTube, Loom, Box)
-  live_demo: "demo/live-demo-url.txt"      # URL to deployed demo (optional)
-  screenshots: "demo/screenshots/"
+  demo_video: "demo/demo-video-link.txt"
+  live_demo: "demo/live-demo-url.txt"
+  screenshots: "demo/screenshot/"
   presentation: "presentation/"
